@@ -9,7 +9,7 @@ from models.load_utils import clean
 from models.load_utils import to_markdown
 
 
-def remove_strings(page_content):
+def remove_strings(page_content: str) -> str:
     """This function removed unwanted strings."""
     # List of strings to remove
     strings_to_remove = ["|", "-"]
