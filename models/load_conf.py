@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 from typing import Any
 from typing import Iterator
 from typing import cast
@@ -45,6 +46,14 @@ def _to_markdown(html: str, **options: Any) -> str:
     return cast(str, ConferenceMarkdownConverter(**options).convert(html))
 
 
+def clean_text(markdown_content: str) -> Any:
+    """Clean markdown."""
+    # Search for the position of "unwanted text" (case insensitive)
+    text_data = re.sub(r'<a name="p\d+"></a>', "", markdown_content)
+
+    return text_data
+
+
 def load_conference_talk(url: str, html: str, bs_parser: str = "html.parser") -> Document:
     """Load a conference talk from a url and html."""
     path_components = urlparse(url).path.split("/")
@@ -55,6 +64,7 @@ def load_conference_talk(url: str, html: str, bs_parser: str = "html.parser") ->
     author_role = soup.select_one("article p.author-role")
     body = soup.select_one("article div.body-block")
     content = clean(_to_markdown(str(body), base_url=url)) if body else ""
+    content = clean_text(content)
     metadata = {
         "year": year,
         "month": month,
