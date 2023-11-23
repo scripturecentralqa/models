@@ -22,6 +22,7 @@ def load_bgbmm(url: str, html: str, bs_parser: str = "html.parser") -> Document:
             # print(unwanted_text)
 
     content = clean(to_markdown(str(body), base_url=url)) if body else ""
+    content = content.replace("### **Comments**", "")
 
     metadata = {
         "url": url,
