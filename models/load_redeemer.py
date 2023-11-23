@@ -11,13 +11,13 @@ from models.load_utils import to_markdown
 
 def remove_strings(page_content: str) -> str:
     """This function removed unwanted strings."""
-    # List of strings to remove
-    strings_to_remove = ["|", "-"]
+    # Replace "|" with an empty string
+    page_content = page_content.replace("|", "")
 
-    # Iterate through each character in the page content
-    cleaned_content = "".join(char for char in page_content if char not in strings_to_remove)
+    # Replace "---" with an empty string
+    page_content = page_content.replace("---", "")
 
-    return cleaned_content
+    return page_content
 
 
 def extract_title(soup: BeautifulSoup) -> Any:

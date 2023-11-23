@@ -1596,7 +1596,7 @@ _WidgetManager._RegisterWidget('_AttributionView', new _WidgetInfo('Attribution1
 
 """
 
-strings = ["|", "-"]
+strings = ["|", "---"]
 
 
 def test_load_redeemer() -> None:
