@@ -9,13 +9,13 @@ from models.load_utils import clean
 from models.load_utils import to_markdown
 
 
-def remove_links(markdown_content) -> str:
+def remove_links(markdown_content: str) -> str:
     """Remove links from the document."""
     pattern = r"\[(.*?)\]\((.*?)\)"
     return re.sub(pattern, "", markdown_content)
 
 
-def remove_lines_starting_with_pipe(text) -> str:
+def remove_lines_starting_with_pipe(text: str) -> str:
     """Remove unwanted lines of text."""
     # Pattern to match lines starting with "|"
     pattern = r"^\|.*$"
@@ -26,7 +26,7 @@ def remove_lines_starting_with_pipe(text) -> str:
     return result
 
 
-def remove_non_texts(markdown_text) -> str:
+def remove_non_texts(markdown_text: str) -> str:
     """Remove unwanted lines of text."""
     # Define the regex pattern for non-texts
     non_text_pattern = re.compile(r"\[[^\]]+\]\[[^\]]+\]")
@@ -37,7 +37,7 @@ def remove_non_texts(markdown_text) -> str:
     return cleaned_text
 
 
-def remove_non_texts_anywhere(markdown_text) -> str:
+def remove_non_texts_anywhere(markdown_text: str) -> str:
     """Remove unwanted lines of text."""
     # Define the regex pattern for lines starting with the non-text pattern '>'
     non_text_pattern = re.compile(r"^\s*>", re.MULTILINE)
