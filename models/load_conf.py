@@ -49,7 +49,7 @@ def _to_markdown(html: str, **options: Any) -> str:
 def clean_text(markdown_content: str) -> Any:
     """Clean markdown."""
     # Search for the position of "unwanted text" (case insensitive)
-    text_data = re.sub(r'<a name="p\d+"></a>', "", markdown_content)
+    text_data = re.sub(r'<a name="p(\d+)"></a>', "", markdown_content)
 
     return text_data
 
