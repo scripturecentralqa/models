@@ -1,5 +1,7 @@
 """Load Pearl of Great Price."""
 
+import re
+
 from bs4 import BeautifulSoup
 from langchain.schema.document import Document
 
@@ -7,24 +9,43 @@ from models.load_utils import clean
 from models.load_utils import to_markdown
 
 
-def remove_hrefs_and_strong_text(html_content):
-    """Remove hrefs in p tag."""
-    soup = BeautifulSoup(html_content, "html.parser")
-    # Find all <p> tags containing <a> tags with href attributes and <em> tags
-    for p_tag in soup.find_all("p"):
-        a_tags = p_tag.find_all("a", href=True)
-        for a_tag in a_tags:
-            # Find <strong> tags within <em> tags and remove them
-            em_tag = a_tag.find("em")
-            if em_tag:
-                strong_tag = em_tag.find("strong")
-                if strong_tag:
-                    strong_tag.extract()
-            # Remove the entire <a> tag
-            a_tag.extract()
-    # Get the cleaned HTML content
-    cleaned_content = str(soup)
-    return cleaned_content
+def remove_links(markdown_content):
+    """Remove links from the document."""
+    pattern = r"\[(.*?)\]\((.*?)\)"
+    return re.sub(pattern, "", markdown_content)
+
+
+def remove_lines_starting_with_pipe(text):
+    """Remove unwanted lines of text."""
+    # Pattern to match lines starting with "|"
+    pattern = r"^\|.*$"
+
+    # Use re.MULTILINE to match the pattern at the beginning of each line
+    result = re.sub(pattern, "", text, flags=re.MULTILINE)
+
+    return result
+
+
+def remove_non_texts(markdown_text):
+    """Remove unwanted lines of text."""
+    # Define the regex pattern for non-texts
+    non_text_pattern = re.compile(r"\[[^\]]+\]\[[^\]]+\]")
+
+    # Use sub() to replace non-text patterns with an empty string
+    cleaned_text = re.sub(non_text_pattern, "", markdown_text)
+
+    return cleaned_text
+
+
+def remove_non_texts_anywhere(markdown_text):
+    """Remove unwanted lines of text."""
+    # Define the regex pattern for lines starting with the non-text pattern '>'
+    non_text_pattern = re.compile(r"^\s*>", re.MULTILINE)
+
+    # Use sub() to replace non-text patterns at the beginning of lines with an empty string
+    cleaned_text = re.sub(non_text_pattern, "", markdown_text)
+
+    return cleaned_text
 
 
 def load_pogp(url: str, html: str, bs_parser: str = "html.parser") -> Document:
@@ -35,7 +56,11 @@ def load_pogp(url: str, html: str, bs_parser: str = "html.parser") -> Document:
 
     content = clean(to_markdown(str(body), base_url=url)) if body else ""
     content = content.split("\n\n#### Further Reading\n\n")[0]
-    content = remove_hrefs_and_strong_text(content)
+    content = remove_links(content)
+    content = remove_lines_starting_with_pipe(content)
+    content = remove_non_texts(content)
+    content = remove_non_texts_anywhere(content)
+
     metadata = {
         "url": url,
         "title": clean(title) if title else "",
